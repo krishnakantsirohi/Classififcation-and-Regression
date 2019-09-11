@@ -1,0 +1,21 @@
+---
+title: "Naive Bayes"
+output: html_notebook
+---
+
+This is a R-notebook for Naive Bayes model
+
+```{r}
+project_data = read.csv(file.choose())
+set.seed(30)
+project_sample = sample(nrow(project_data),2000)
+project_data = project_data[project_sample,]
+set.seed(30)
+split_ratio = sample(nrow(project_data), 0.6*nrow(project_data))
+training_data = project_data[split_ratio,]
+testing_data = project_data[-split_ratio,]
+naive_model = naiveBayes(income ~.,data = training_data)
+naive_predictor = predict(naive_model, testing_data)
+naive_CM = confusionMatrix(naive_predictor, testing_data$income, mode = "everything")
+naive_CM
+```

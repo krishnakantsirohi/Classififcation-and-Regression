@@ -13,6 +13,7 @@ project_data = read.csv(file.choose())
 set.seed(30)
 project_sample = sample(nrow(project_data),2000)
 project_data = project_data[project_sample,]
+set.seed(30)
 split_ratio = sample(nrow(project_data), 0.6*nrow(project_data))
 training_data = project_data[split_ratio,]
 testing_data = project_data[-split_ratio,]
@@ -20,7 +21,7 @@ trctrl = trainControl(method = "repeatedcv", number = 10, repeats = 3)
 set.seed(30)
 info_gain_model = train(income ~., data = training_data, method = "rpart", parms = list(split = "information"), trControl = trctrl, tuneLength = 10)
 info_gain_predictor = predict(info_gain_model, newdata = testing_data)
-info_gain_CM = confusionMatrix(info_gain_predictor, testing_data$income)
+info_gain_CM = confusionMatrix(info_gain_predictor, testing_data$income, mode = "everything")
 info_gain_CM
 ```
 
