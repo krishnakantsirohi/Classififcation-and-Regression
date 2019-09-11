@@ -19,8 +19,12 @@ training_data = project_data[split_ratio,]
 testing_data = project_data[-split_ratio,]
 trctrl = trainControl(method = "repeatedcv", number = 10, repeats = 3)
 set.seed(30)
-info_gain_model = train(income ~., data = training_data, method = "rpart", parms = list(split = "gini"), trControl = trctrl, tuneLength = 10)
-info_gain_predictor = predict(info_gain_model, newdata = testing_data)
-info_gain_CM = confusionMatrix(info_gain_predictor, testing_data$income, mode = "everything")
-info_gain_CM
+gini_model = train(income ~., data = training_data, method = "rpart", parms = list(split = "gini"), trControl = trctrl, tuneLength = 10)
+gini_predictor = predict(gini_model, newdata = testing_data)
+gini_CM = confusionMatrix(gini_predictor, testing_data$income, mode = "everything")
+gini_predictor = predict(info_gain_model, newdata = testing_data, type = "prob")[,2]
+gini_CM
+gini_prediction = prediction(gini_predictor, testing_data$income)
+gini_perf = performance(gini_prediction, "tpr", "fpr")
+plot(gini_perf)
 ```

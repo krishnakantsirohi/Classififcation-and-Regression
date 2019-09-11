@@ -22,6 +22,10 @@ set.seed(30)
 info_gain_model = train(income ~., data = training_data, method = "rpart", parms = list(split = "information"), trControl = trctrl, tuneLength = 10)
 info_gain_predictor = predict(info_gain_model, newdata = testing_data)
 info_gain_CM = confusionMatrix(info_gain_predictor, testing_data$income, mode = "everything")
+info_gain_predictor = predict(info_gain_model, newdata = testing_data,type = "prob")[,2]
 info_gain_CM
+info_gain_prediction = prediction(info_gain_predictor, testing_data$income)
+info_gain_perf = performance(info_gain_prediction, "tpr", "fpr")
+plot(info_gain_perf)
 ```
 
