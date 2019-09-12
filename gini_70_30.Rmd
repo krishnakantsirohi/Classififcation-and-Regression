@@ -1,0 +1,30 @@
+---
+title: "GINI model"
+output: html_notebook
+---
+
+This is a R-notebook for GINI model
+
+```{r}
+library(rpart)
+library(rpart.plot)
+library(caret)
+project_data = read.csv(file.choose())
+set.seed(30)
+project_sample = sample(nrow(project_data),2000)
+project_data = project_data[project_sample,]
+set.seed(30)
+split_ratio = sample(nrow(project_data), 0.7*nrow(project_data))
+training_data = project_data[split_ratio,]
+testing_data = project_data[-split_ratio,]
+trctrl = trainControl(method = "repeatedcv", number = 10, repeats = 3)
+set.seed(30)
+gini_model = train(income ~., data = training_data, method = "rpart", parms = list(split = "gini"), trControl = trctrl, tuneLength = 10)
+gini_predictor = predict(gini_model, newdata = testing_data)
+gini_CM = confusionMatrix(gini_predictor, testing_data$income, mode = "everything")
+gini_predictor = predict(gini_model, newdata = testing_data, type = "prob")[,2]
+gini_CM
+gini_prediction = prediction(gini_predictor, testing_data$income)
+gini_perf = performance(gini_prediction, "tpr", "fpr")
+plot(gini_perf)
+```
